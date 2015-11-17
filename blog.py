@@ -49,11 +49,16 @@ class BlogHandler(webapp2.RequestHandler):
         cookie_val = self.request. cookies.get(name)
         return cookie_val and check_secure_val(cookie_val) #if cookie_val and check_secure_val return cookie_val
 
-    def login(arg):
-        pass
+    def login(self, user):
+        self.set_secure_cookie('user_id', str(user.key().id()))
 
-    def logout(arg):
-        pass
+    def logout(self):
+        self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
+
+    def initialize(self, *a, **kw):
+        webapp2.RequestHandler.initialize(self, *a, **kw)
+        uid = self.read_secure_cookie('user_id')
+        self.user = uid and User.by_id(int(uid))
 
 def render_post(response, post):
     response.out.write('<b>' + post.subject + '</b><br>')
@@ -62,6 +67,18 @@ def render_post(response, post):
 class MainPage(BlogHandler):
   def get(self):
       self.write('Hello, Udacity!')
+
+#### user stuff, hashing, security, login..
+
+def make_salg(length = 5):
+    return ''.join(random.choice(letters for x in xrange(length)))
+
+def make_pw_hash(name, pw, salt = None): #takes an optional paramater for salt
+    if not salt:
+        salt = make_salt()
+    h = hashlib.sha256(name + pw + salt).hexidigest()
+    return '%s,%s' % (salt, h) ## returns the hashed version of your name,pw,and salt together with the salt
+
 
 ##### blog stuff
 
