@@ -73,11 +73,38 @@ class MainPage(BlogHandler):
 def make_salg(length = 5):
     return ''.join(random.choice(letters for x in xrange(length)))
 
-def make_pw_hash(name, pw, salt = None): #takes an optional paramater for salt
+def make_pw_hash(name, pw, salt = None): #takes an optional paramater for salt. only make a new salt when we make a new password hash
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexidigest()
     return '%s,%s' % (salt, h) ## returns the hashed version of your name,pw,and salt together with the salt
+
+def valid_pw(name, password, h): # to verify the passwor hash
+    salt = h.split(',') [0]
+    return h == make_pw_hash(name, password, salt) ## return True if h equals make_pw_hash
+
+def users_key(group = 'default'):
+    return db.Key.from_path('users', group) # creates the ancestor key for all the users in our database. right now we only have one group
+
+class User(db.Model): ##this is our user object that we store in the databas. it inherits db.Model
+    name = db.StringProperty(required = True)
+    pw_hash = db.StringProperty(required = True) # we don't store the password in the database, only the hash
+    email = db.StringProperty()
+
+    @classmethod #decorator, you can call this method on this object
+    def by_id(cls, name): #normally you'd write "self" --> call the method on yourself (object). in this case we call it on the class
+        return User.get_by_id(uid, parent = user_key())
+    @classmethod
+    def by_name(arg):
+        pass
+
+    @classmethod
+    def register(arg):
+        pass
+
+    @classmethod
+    def login(arg):
+        pass
 
 
 ##### blog stuff
