@@ -66,7 +66,7 @@ def render_post(response, post):
 
 class MainPage(BlogHandler):
   def get(self):
-      self.write('Hello, Udacity!')
+      self.write('Hello, Silvan!')
 
 #### user stuff, hashing, security, login..
 
@@ -225,9 +225,8 @@ class Welcome(BlogHandler):
         else:
             self.redirect('/unit2/signup')
 
-app = webapp2.WSGIApplication([('/', MainPage),
+app = webapp2.WSGIApplication([('/', Signup),
                                ('/unit2/rot13', Rot13),
-                               ('/unit2/signup', Signup),
                                ('/unit2/welcome', Welcome),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
